@@ -66,6 +66,8 @@ fills.forEach(fill => {
 
 let gainUsd = 0;
 
+console.log(btcBuys);
+
 const processSell = (sellSize, sellPrice) => {
   const firstBuy = btcBuys[0];
 
@@ -123,6 +125,19 @@ for (let i = 0; i < btcSells.length; i++) {
   const curSell = btcSells[i];
   processSell(curSell.size, curSell.price);
 }
+
+let hodlBtc = 0;
+
+console.log(btcBuys);
+
+// left over from sells
+btcBuys.forEach(btcBuy => {
+  if (parseFloat(btcBuy.price) > 34000) {
+    hodlBtc += parseFloat(btcBuy.size);
+  }
+});
+
+console.log('hodl btc', hodlBtc);
 
 console.log('gains', gainUsd);
 

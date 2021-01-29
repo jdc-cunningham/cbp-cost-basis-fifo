@@ -3,7 +3,28 @@ const crypto = require('crypto');
 const axios = require('axios');
 
 const getFills = (req, res) => {
-  const secret = process.env.CBP_DEFAULT_PORTFOLIO_SECRET;
+  const activePortfolio = 1; // 1, 2, 3 for my case different portfolios see array below.
+
+  const portfolios = [
+    {}, // offset
+    {
+      key: process.env.CBP_DEFAULT_PORTFOLIO_KEY,
+      passphrase: process.env.CBP_DEFAULT_PORTFOLIO_PASSPHRASE,
+      secret: process.env.CBP_DEFAULT_PORTFOLIO_SECRET
+    },
+    {
+      key: process.env.CBP_SHORTS_PORTFOLIO_KEY,
+      passphrase: process.env.CBP_SHORTS_PORTFOLIO_PASSPHRASE,
+      secret: process.env.CBP_SHORTS_PORTFOLIO_SECRET
+    },
+    {
+      key: process.env.CBP_FIFO_PORTFOLIO_KEY,
+      passphrase: process.env.CBP_FIFO_PORTFOLIO_PASSPHRASE,
+      secret: process.env.CBP_FIFO_PORTFOLIO_SECRET
+    }
+  ];
+
+  const secret = portfolios[activePortfolio].secret;
 
   const timestamp = Date.now() / 1000;
   const requestPath = '/fills?product_id=BTC-USD';
@@ -25,10 +46,10 @@ const getFills = (req, res) => {
 
   axios.get(`${process.env.CBP_API_BASE}/fills?product_id=BTC-USD`, {
     headers: {
-      'CB-ACCESS-KEY': process.env.CBP_DEFAULT_PORTFOLIO_KEY,
+      'CB-ACCESS-KEY': portfolios[activePortfolio].key,
       'CB-ACCESS-SIGN': sign,
       'CB-ACCESS-TIMESTAMP': timestamp,
-      'CB-ACCESS-PASSPHRASE': process.env.CBP_DEFAULT_PORTFOLIO_PASSPHRASE
+      'CB-ACCESS-PASSPHRASE': portfolios[activePortfolio].passphrase
     }
   })
     .then(function (response) {
