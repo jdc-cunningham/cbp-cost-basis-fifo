@@ -3,7 +3,39 @@
   <head>
       <%- include('./../partials/head'); %>
   </head>
-  <body class="container">
-    
+  <body class="app">
+    <div class="app__header">
+        <% Object.keys(portfolios).forEach(portfolio => { %>
+            <a class="header__link" href="/<%= portfolio.split(" ").join("-") %>">
+                <div class="header__tab"><%= portfolio %></div>
+            </a>
+        <% }) %>
+    </div>
+    <div class="app__body">
+        <%
+            // portfolioData - Object with properties:
+            // buys (array)
+            // sells (array)
+            // sellGainLoss (array)
+            // gains (float)
+            // overPaginationLimit (boolean)
+        %>
+        <div class="body__highlights">
+            <h2>Portfolio gains $<%= portfolioData.gains.toFixed(2) %></h2>
+        </div>
+        <div class="body__sell-blocks">
+            <% portfolioData.sellGainLoss.forEach(sellGainLossItem => { %>
+                <div class="sell-block">
+                    <div class="sell-block__bar <%= parseFloat(sellGainLossItem.usdGain) > 0 ? "green" : "red" %>"></div>
+                    <div class="sell-block__text">
+                        <p>
+                            sold at: $<%= sellGainLossItem.price %> on <%= sellGainLossItem.sellDateTime.split('T')[0] %>
+                            gain <%= parseFloat(sellGainLossItem.usdGain) > 0 ? "" : "-" %>$<%= sellGainLossItem.usdGain.toFixed(2).replace('-', '') %>
+                        </p>
+                    </div>
+                </div>
+            <% }) %> 
+        </div>
+    </div>
   </body>
 </html>
