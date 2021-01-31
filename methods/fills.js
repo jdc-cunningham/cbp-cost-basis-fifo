@@ -3,7 +3,7 @@ const crypto = require('crypto');
 const axios = require('axios');
 
 const getFills = (req, res) => {
-  const activePortfolio = 1; // 1, 2, 3 for my case different portfolios see array below.
+  const activePortfolio = 2; // 1, 2, 3 for my case different portfolios see array below.
 
   const portfolios = [
     {}, // offset

@@ -21,7 +21,7 @@ const btcLeft = [];
 console.log(fills.length);
 
 // this matches value in fills.js
-const activePortfolio = 1;
+const activePortfolio = 2;
 
 // transfers
 if (activePortfolio === 1) {
