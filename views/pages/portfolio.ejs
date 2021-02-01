@@ -24,6 +24,7 @@
             <div class="body__sell-blocks">
                 <div class="body__highlights">
                     <h2>Portfolio gains $<%= portfolioData.gains.toFixed(2) %></h2>
+                    <p>Showing all data? <%= portfolioData.overPaginationLimit ? 'no' : 'yes' %></p>
                 </div>
                 <% portfolioData.sellGainLoss.forEach(sellGainLossItem => { %>
                     <div class="sell-block">
