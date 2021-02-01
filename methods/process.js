@@ -1,7 +1,8 @@
 // this is a test file just running through data
 require('dotenv').config({ path: './.env' });
 
-const processBuySells = (activePortfolio, fills) => {
+const processBuySells = (activePortfolio, apiData) => {
+  const { fills, btcPrice } = apiData;
   const btcBuys = [];
   const btcSells = [];
 
@@ -106,7 +107,8 @@ const processBuySells = (activePortfolio, fills) => {
     sells: btcSells,
     sellGainLoss,
     gains: usdGains,
-    overPaginationLimit: fills.length < 100 ? false : true
+    overPaginationLimit: fills.length < 100 ? false : true,
+    btcPrice
   }
 }
 

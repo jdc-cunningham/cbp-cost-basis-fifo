@@ -12,11 +12,7 @@ app.set('view engine', 'ejs');
 app.use(express.static('public'));
 
 app.get('/', (req, res) => {
-  res.render('./pages/index', { portfolios: {
-    'portfolio 1': 1,
-    'portfolio 2': 2,
-    'portfolio 3': 3
-  }});
+  res.render('./pages/index');
 });
 
 app.get('/portfolio-*', (req, res) => {
@@ -27,13 +23,13 @@ app.get('/portfolio-*', (req, res) => {
 
   getFills(activePortfolio).then((data) => {
     if (data) {
-      res.render('./pages/index', {
+      res.render('./pages/portfolio', {
         portfolios: {
         'portfolio 1': 1,
         'portfolio 2': 2,
         'portfolio 3': 3
         },
-        portfolioData: processBuySells(activePortfolio, data),
+        portfolioData: processBuySells(activePortfolio, data)
       });
     } else {
       res.send('Failed to get data from CBP');

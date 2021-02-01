@@ -57,7 +57,17 @@ const getFills = async (requestedPortfolio) => {
       }
     })
     .then(function (response) {
-      resolve(response.data);
+      // get BTC price
+      axios.get('https://api.coindesk.com/v1/bpi/currentprice.json')
+      .then(function (response2) {
+        resolve({
+          fills: response.data,
+          btcPrice: response2.data.bpi.USD.rate
+        });
+      })
+      .catch(function (error) {
+        resolve(false);
+      });
     })
     .catch(function (error) {
       resolve(false);

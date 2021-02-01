@@ -15,6 +15,18 @@ p {
   height: 100vh;
 }
 
+.app__home {
+  padding: 10px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  flex-direction: column;
+}
+
+.app__home a {
+  margin-top: 5px;
+}
+
 .app__header {
   display: flex;
   align-items: stretch;
@@ -41,11 +53,20 @@ p {
   border-top: 1px solid #aaa;
 }
 
+.body__container {
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  flex-direction: row;
+  width: 100%;
+}
+
 .body__sell-blocks {
   display: flex;
   align-items: flex-start;
   justify-content: flex-start;
   flex-direction: column;
+  width: 50%;
 }
 
 .sell-block {
@@ -71,4 +92,27 @@ p {
 
 .sell-block__text {
   padding-left: 5px;
+}
+
+.btc-owned__row {
+  margin-top: 5px;
+}
+
+.btc-owned__row span {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  flex-direction: row;
+}
+
+.btc-owned__row.green p {
+  color: green;
+}
+
+.btc-owned__row.red p {
+  color: red;
+}
+
+.btc-owned__row span p {
+  margin-left: 5px;
 }
