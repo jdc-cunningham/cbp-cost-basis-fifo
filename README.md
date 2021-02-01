@@ -21,3 +21,5 @@ I did get lazy on the UI. I didn't get too creative on it. Ideally you'd scale t
 Added ability to see what BTC owned can be sold now based on current price, using Coindesk API.
 
 ![can sell now](./can-sell-now.PNG)
+
+This code is nasty sorry about that. I sunk way too much time on the calculation part on FIFO the rest can be updated for better visuals but this code serves my needs.
