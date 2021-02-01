@@ -16,3 +16,8 @@ I thought about using `React` againts the `node` API but this is fine.
 I did get lazy on the UI. I didn't get too creative on it. Ideally you'd scale the bars/make it visually make sense about size of sell. At least it has the basic green/red. It took me a super long time to write the math for the FIFO part that's why the UI I just threw together in like 2 hours or less and this is one of the few times I've used `EJS`.
 
 ![current UI](./current-ui.PNG)
+
+### Update
+Added ability to see what BTC owned can be sold now based on current price, using Coindesk API.
+
+![can sell now](./can-sell-now.PNG)

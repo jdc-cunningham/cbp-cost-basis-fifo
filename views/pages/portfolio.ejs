@@ -42,8 +42,8 @@
                 <p>BTC current price: <%= portfolioData.btcPrice.toLocaleString() %></p>
                 <div class="btc-owned__rows">
                     <% portfolioData.buys.forEach(btcBuy => { %>
-                        <div class="btc-owned__row <%= parseFloat(btcBuy.price) < parseFloat(portfolioData.btcPrice) ? 'green' : 'red' %>">
-                            <span>Btc amt: <%= btcBuy.size %> bought at <%= btcBuy.price %> Can sell now? <p><%= parseFloat(btcBuy.price) < parseFloat(portfolioData.btcPrice) ? 'yes' : 'no' %> </p></span>
+                        <div class="btc-owned__row <%= parseFloat(btcBuy.price) < parseInt(portfolioData.btcPrice.replace(',', '')) ? 'green' : 'red' %>">
+                            <span>Btc amt: <%= btcBuy.size %> bought at <%= btcBuy.price %> Can sell now? <p><%= parseInt(btcBuy.price) < parseFloat(portfolioData.btcPrice.replace(',', '')) ? 'yes' : 'no' %> </p></span>
                         </div>
                     <% }) %>
                 </div>
