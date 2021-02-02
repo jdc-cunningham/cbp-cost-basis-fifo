@@ -26,7 +26,7 @@
                     <h2>Portfolio gains $<%= portfolioData.gains.toFixed(2) %></h2>
                     <p>Showing all data? <%= portfolioData.overPaginationLimit ? 'no' : 'yes' %></p>
                 </div>
-                <% portfolioData.sellGainLoss.forEach(sellGainLossItem => { %>
+                <% portfolioData.sellGainLoss.reverse().forEach(sellGainLossItem => { %>
                     <div class="sell-block">
                         <div class="sell-block__bar <%= parseFloat(sellGainLossItem.usdGain) > 0 ? "green" : "red" %>"></div>
                         <div class="sell-block__text">
@@ -41,10 +41,16 @@
             <div class="body__btc-owned">
                 <h2>Unsold BTC and gains according to current price</h2>
                 <p>BTC current price: <%= portfolioData.btcPrice.toLocaleString() %></p>
+                <%
+                    // dumb sum can't get array reduce over objects working right
+                    let btcOwnedAmnt = 0;
+                    portfolioData.buys.forEach(buy => btcOwnedAmnt += buy.size);
+                %>
+                <p>Current BTC owned: <%= btcOwnedAmnt.toFixed(8) %></p>
                 <div class="btc-owned__rows">
                     <% portfolioData.buys.forEach(btcBuy => { %>
                         <div class="btc-owned__row <%= parseFloat(btcBuy.price) < parseInt(portfolioData.btcPrice.replace(',', '')) ? 'green' : 'red' %>">
-                            <span>Btc amt: <%= btcBuy.size %> bought at <%= btcBuy.price %> Can sell now? <p><%= parseInt(btcBuy.price) < parseFloat(portfolioData.btcPrice.replace(',', '')) ? 'yes' : 'no' %> </p></span>
+                            <span>Btc amt: <%= btcBuy.size.toFixed(8) %> bought at <%= btcBuy.price %> Can sell now? <p><%= parseInt(btcBuy.price) < parseFloat(portfolioData.btcPrice.replace(',', '')) ? 'yes' : 'no' %> </p></span>
                         </div>
                     <% }) %>
                 </div>
