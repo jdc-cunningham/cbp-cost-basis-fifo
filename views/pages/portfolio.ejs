@@ -31,7 +31,7 @@
                         <div class="sell-block__bar <%= parseFloat(sellGainLossItem.usdGain) > 0 ? "green" : "red" %>"></div>
                         <div class="sell-block__text">
                             <p>
-                                sold at: $<%= sellGainLossItem.price %> on <%= sellGainLossItem.sellDateTime.split('T')[0] %>
+                                sold <%= sellGainLossItem.size %> at: $<%= sellGainLossItem.price %> on <%= sellGainLossItem.sellDateTime.split('T')[0] %>
                                 gain <%= parseFloat(sellGainLossItem.usdGain) > 0 ? "" : "-" %>$<%= sellGainLossItem.usdGain.toFixed(2).replace('-', '') %>
                             </p>
                         </div>
