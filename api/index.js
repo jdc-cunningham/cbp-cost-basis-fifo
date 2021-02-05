@@ -2,7 +2,8 @@ require('dotenv').config({ path: './.env' });
 const express = require('express');
 const app = express();
 const port = 5009;
-const { getData } = require('./methods/group-data');
+const { getBtcPrice } = require('./methods/requests');
+const { getGainsLoss } = require('./methods/process');
 
 // CORs
 app.use((req, res, next) => {
@@ -11,7 +12,9 @@ app.use((req, res, next) => {
   next();
 });
 
-app.get('/portfolio/:portfolio_id/:endpoint', getData);
+app.get('/btc-price', getBtcPrice);
+
+app.get('/total-fifo-gains-loss', getGainsLoss);
 
 app.get('*', (req, res) => {
   res.status(404).send('404: Bad Request');

@@ -1,4 +1,4 @@
-const { getFills, getPrice } = require('./requests');
+const { getFills } = require('./requests');
 
 // mostly this is here for the recursive aspect
 /**
@@ -6,9 +6,8 @@ const { getFills, getPrice } = require('./requests');
  * @param {array} allFills
  * @param {integer} page 
  * @param {integer} cursorId from CBP response headers
- * @param {res} a sin
  */
-const getNextFills = async (allFills, portfolioId, page, cursorId, res) => {
+const getNextFills = async (allFills, portfolioId, page, cursorId) => {
   setTimeout(async () => {
     page += 1;
     // info on pagination https://docs.pro.coinbase.com/#pagination
@@ -18,7 +17,7 @@ const getNextFills = async (allFills, portfolioId, page, cursorId, res) => {
     if (paginated) {
       getNextFills(allFills, portfolioId, page, nextFills.headers['cb-after'], res);
     } else {
-      res.status(200).send(allFills);
+      return allFills;
     }
   }, 500); // this delay is to prevent hammering the CBP API though it's 3 requests per second
 }
@@ -29,7 +28,7 @@ const getData = async (req, res) => {
 
   // what
   if (!Number.isInteger(portfolioId) || portfolioId < 0 || portfolioId > 5) {
-    res.status(400).send('404: Bad Request');
+    res.status(400).send('400: Bad Request');
   }
 
   const fillsRes = await getFills(portfolioId);
@@ -45,10 +44,10 @@ const getData = async (req, res) => {
     if (paginated) {
       getNextFills(allFills, portfolioId, page, fillsRes.headers['cb-after'], res);
     } else {
-      res.status(200).send(allFills);
+      return allFills;
     }
   } else {
-    res.status(404).send('404: Bad Request');
+    return false;
   }
 };
 

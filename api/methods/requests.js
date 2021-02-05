@@ -80,23 +80,38 @@ const getFills = async (requestedPortfolio, page = null, cursorId = null) => {
       });
     })
     .catch((error) => {
-      resolve(false);
+      resolve(false); // ehh terrible error handling
     });
   });
 }
 
 // this whole thing only designed for BTC at this time
-const getPrice = () => {
- // get BTC price
- axios.get('https://api.coindesk.com/v1/bpi/currentprice.json')
- .then((response) => {
-   resolve(response.data.bpi.USD.rate);
- })
- .catch((error) => {
-   resolve(false);
- });
+const getBtcPrice = async (req, res) => {
+  // get BTC price
+  axios.get('https://api.coindesk.com/v1/bpi/currentprice.json')
+  .then((response) => {
+    res.status(200).send(response.data.bpi.USD.rate);
+  })
+  .catch((error) => {
+    res.status(400).send('Bad Request');
+  });
 }
 
+// the only reason I have this is so I have the public one above
+const _getBtcPrice = async () => {
+  return new Promise(resolve => {
+    axios.get('https://api.coindesk.com/v1/bpi/currentprice.json')
+    .then((response) => {
+      resolve(response.data.bpi.USD.rate);
+    })
+    .catch((error) => {
+      resolve(false);
+    });
+  });
+};
+
 module.exports = {
-  getFills
+  getFills,
+  getBtcPrice,
+  _getBtcPrice
 }
