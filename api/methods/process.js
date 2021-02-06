@@ -70,7 +70,7 @@ const processBuySells = (activePortfolio, apiData) => {
        * if the row is partially used, update the size
        */
 
-      while (filledSize < sellSize) {
+      while (filledSize < sellSize && btcBuys[0]) {
         const curFillSize = sellSize - filledSize;
         const curBuyRow = btcBuys[0]; // 3, +3 to soldAmnt
         const buyPrice = curBuyRow.price;
