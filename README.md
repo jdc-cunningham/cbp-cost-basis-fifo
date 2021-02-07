@@ -1,7 +1,7 @@
 ##### Disclaimer:
 I am not a CPA or whatever, I calculated gains by FIFO to my understanding. The current BTC balance matched what was in my portfolio so I <u>think</u> this is right.
 
-#### note:
+### Note
 The most accurate version of this app is the spa-version app. Specifically all of the portfolios(up to 5 as limited by CBP) are totaled together regarding FIFO order... before I was only doing the individual portfolios which is not correct.
 
 ### Purpose
