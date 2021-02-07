@@ -1,6 +1,9 @@
 ##### Disclaimer:
 I am not a CPA or whatever, I calculated gains by FIFO to my understanding. The current BTC balance matched what was in my portfolio so I <u>think</u> this is right.
 
+#### note:
+The most accurate version of this app is the spa-version app. Specifically all of the portfolios(up to 5 as limited by CBP) are totaled together regarding FIFO order... before I was only doing the individual portfolios which is not correct.
+
 ### Purpose
 Primarily for me to see if I'm losing/gaining. You could also simulate gains by what you sell your current BTC balance at. However that's not in this code, just saying the current code will read "fills" so if you add a pretend sell ontop of the data it would churn through that and would be added to the gains/loss highlight.
 
