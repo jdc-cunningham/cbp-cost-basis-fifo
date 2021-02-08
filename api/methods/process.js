@@ -4,11 +4,19 @@ const { getFills, _getBtcPrice } = require('./requests');
 
 const processBuySells = (activePortfolio, apiData) => {
   const { fills, btcPrice } = apiData;
+
+  if (!fills) {
+    return {
+      gains: 0
+    }
+  }
+
   const btcBuys = [];
   const btcSells = [];
+  const dateFillsOffset = true; // this is because all of my btc holdings were sold after TSLA $1.5B buy
 
   // transfers, this is a special case
-  if (parseInt(activePortfolio) === 1) {
+  if (parseInt(activePortfolio) === 1 && !dateFillsOffset) {
     const transferredArr = JSON.parse(process.env.TRANSFERRED_BTC_ARR);
     transferredArr.forEach(transfer => {
       btcBuys.push({
@@ -27,6 +35,11 @@ const processBuySells = (activePortfolio, apiData) => {
   // first loop to get data sorted
   for (let i = 0; i < fills.length; i++) {
     const fill = fills[i];
+
+    if (dateFillsOffset && fill.created_at <= '2021-02-08T12:51:26.013Z') {
+      continue;
+    }
+
     if (fill.side === 'buy') {
       btcBuys.push({
         size: parseFloat(fill.size),
@@ -48,7 +61,7 @@ const processBuySells = (activePortfolio, apiData) => {
 
   const processSell = (sellSize, sellPrice, sellDateTime) => {
     const prevUsdGains = usdGains;
-    if (sellSize <= btcBuys[0].size) {
+    if (btcBuys[0] && sellSize <= btcBuys[0].size) {
       const firstBtcBuy = btcBuys[0];
       const buyPrice = firstBtcBuy.price;
       const sellCost = sellPrice * sellSize;
@@ -161,6 +174,14 @@ const getGainsLoss = async (req, res) => {
     }
   );
 
+  const p5Gains = processBuySells(
+    5,
+    {
+      fills: p5Fills.data,
+      btcPrice
+    }
+  );
+
   const totalGains = processBuySells(
     1, // included
     {
@@ -174,7 +195,8 @@ const getGainsLoss = async (req, res) => {
     portfolio 1: $${p1Gains.gains.toFixed(2)} <br>
     portfolio 2: $${p2Gains.gains.toFixed(2)} <br>
     portfolio 3: $${p3Gains.gains.toFixed(2)} <br>
-    portfolio 4: $${p4Gains.gains.toFixed(2)}
+    portfolio 4: $${p4Gains.gains.toFixed(2)} <br>
+    portfolio 5: $${p5Gains.gains.toFixed(2)}
   `);
 }
 
