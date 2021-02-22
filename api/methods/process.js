@@ -13,7 +13,7 @@ const processBuySells = (activePortfolio, apiData) => {
 
   const btcBuys = [];
   const btcSells = [];
-  const dateFillsOffset = true; // this is because all of my btc holdings were sold after TSLA $1.5B buy
+  const dateFillsOffset = '2021-02-21T12:43:51.672Z'; // this is because all of my btc holdings were sold after TSLA $1.5B buy
 
   // transfers, this is a special case
   if (parseInt(activePortfolio) === 1 && !dateFillsOffset) {
@@ -36,7 +36,7 @@ const processBuySells = (activePortfolio, apiData) => {
   for (let i = 0; i < fills.length; i++) {
     const fill = fills[i];
 
-    if (dateFillsOffset && fill.created_at <= '2021-02-08T12:51:26.013Z') {
+    if (dateFillsOffset && fill.created_at < dateFillsOffset) {
       continue;
     }
 
