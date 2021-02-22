@@ -1,7 +1,7 @@
 # files
 .env
 local.json
-.csv
+*.csv
 
 # folders
 node_modules/
