@@ -4,6 +4,8 @@ const { getFills, _getBtcPrice } = require('./requests');
 
 const processBuySells = (activePortfolio, apiData) => {
   const { fills, btcPrice } = apiData;
+  // const { fills } = apiData;
+  // const btcPrice = '58,000.00';
 
   if (!fills) {
     return {
@@ -32,6 +34,12 @@ const processBuySells = (activePortfolio, apiData) => {
     return ((x < y) ? -1 : ((x > y) ? 1 : 0));
   });
 
+
+  let localLoss = 0;
+  let localGain = 0;
+  let sellGain = 0;
+  let sellLoss = 0;
+
   // first loop to get data sorted
   for (let i = 0; i < fills.length; i++) {
     const fill = fills[i];
@@ -39,6 +47,15 @@ const processBuySells = (activePortfolio, apiData) => {
     if (dateFillsOffset && fill.created_at < dateFillsOffset) {
       continue;
     }
+
+    const fillGain = parseFloat(btcPrice.split(',').join('')) / parseFloat(fill.price);
+    fillGain > 1 ? localGain += parseFloat(fill.size) : localLoss += parseFloat(fill.size);
+    console.log(fill.side, fill.created_at, fill.size, `${fill.price}/${btcPrice}`, 'gain:', fillGain.toFixed(2));
+
+    // sellGain += parseFloat((fillGain > 1 ? fillGain : (-1 * 1 - fillGain)) * ((btcPrice.split(',').join('') * parseFloat(fill.size))));
+    fillGain >= 1
+      ? sellGain += ((fillGain - 1) * parseFloat(fill.size * fill.price))
+      : sellLoss += ((1 - fillGain) * parseFloat(fill.size * fill.price));
 
     if (fill.side === 'buy') {
       btcBuys.push({
@@ -55,6 +72,8 @@ const processBuySells = (activePortfolio, apiData) => {
       miscBtc += parseFloat(fill.size);
     }
   };
+
+  console.log('gains', localGain, 'loss', localLoss, 'sellGains', (sellGain - sellLoss));
 
   let usdGains = 0;
   const sellGainLoss = [];
