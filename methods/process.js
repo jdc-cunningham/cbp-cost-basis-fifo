@@ -7,14 +7,14 @@ const processBuySells = (activePortfolio, apiData) => {
   const btcSells = [];
 
   // transfers, this is a special case
-  if (parseInt(activePortfolio) === 1) {
-    const transferredArr = JSON.parse(process.env.TRANSFERRED_BTC_ARR);
-    transferredArr.forEach(transfer => {
-      btcBuys.push({
-      size: parseFloat(transfer.size),
-      price: parseFloat(transfer.price)});
-    });
-  }
+  // if (parseInt(activePortfolio) === 1) {
+  //   const transferredArr = JSON.parse(process.env.TRANSFERRED_BTC_ARR);
+  //   transferredArr.forEach(transfer => {
+  //     btcBuys.push({
+  //     size: parseFloat(transfer.size),
+  //     price: parseFloat(transfer.price)});
+  //   });
+  // }
 
   // sort values by ascending date
   // https://stackoverflow.com/questions/8837454/sort-array-of-objects-by-single-key-with-date-value
@@ -26,6 +26,13 @@ const processBuySells = (activePortfolio, apiData) => {
   // first loop to get data sorted
   for (let i = 0; i < fills.length; i++) {
     const fill = fills[i];
+
+    // date check
+    const dateFillsOffset = '2021-09-18T12:43:51.672Z';
+    if (dateFillsOffset && fill.created_at < dateFillsOffset) {
+      continue;
+    }
+
     if (fill.side === 'buy') {
       btcBuys.push({
         size: parseFloat(fill.size),
