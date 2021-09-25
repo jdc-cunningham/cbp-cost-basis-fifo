@@ -13,7 +13,7 @@ const processBuySells = (activePortfolio, apiData) => {
 
   const btcBuys = [];
   const btcSells = [];
-  const dateFillsOffset = '2021-02-21T12:43:51.672Z'; // this is because all of my btc holdings were sold after TSLA $1.5B buy
+  const dateFillsOffset = '2021-09-18T12:43:51.672Z'; // when I emptied my CPB acct
 
   // transfers, this is a special case
   if (parseInt(activePortfolio) === 1 && !dateFillsOffset) {
@@ -32,6 +32,8 @@ const processBuySells = (activePortfolio, apiData) => {
     return ((x < y) ? -1 : ((x > y) ? 1 : 0));
   });
 
+  let boughtCoin = 0;
+
   // first loop to get data sorted
   for (let i = 0; i < fills.length; i++) {
     const fill = fills[i];
@@ -41,9 +43,11 @@ const processBuySells = (activePortfolio, apiData) => {
     }
 
     if (fill.side === 'buy') {
+      boughtCoin += parseFloat(fill.size);
       btcBuys.push({
         size: parseFloat(fill.size),
-        price: parseFloat(fill.price)
+        price: parseFloat(fill.price),
+        date: fill.created_at
       });
     } else if (fill.side === 'sell') {
       btcSells.push({
@@ -83,7 +87,7 @@ const processBuySells = (activePortfolio, apiData) => {
        * if the row is partially used, update the size
        */
 
-      while (filledSize < sellSize && btcBuys[0]) {
+      while (filledSize < sellSize && parseFloat(btcBuys[0].size) > 0) {
         const curFillSize = sellSize - filledSize;
         const curBuyRow = btcBuys[0]; // 3, +3 to soldAmnt
         const buyPrice = curBuyRow.price;
@@ -128,18 +132,22 @@ const processBuySells = (activePortfolio, apiData) => {
 const getGainsLoss = async (req, res) => {
   let allFills = [];
   const p1Fills = await getFills(1);
-  const p2Fills = await getFills(2);
-  const p3Fills = await getFills(3);
-  const p4Fills = await getFills(4);
-  const p5Fills = await getFills(5);
-  const btcPrice = await _getBtcPrice();
+
+  // const p2Fills = await getFills(2);
+  // const p3Fills = await getFills(3);
+  // const p4Fills = await getFills(4);
+  // const p5Fills = await getFills(5);
+  // const btcPrice = await _getBtcPrice();
+  const btcPrice = '48,000.00';
+
+  // console.log(p1Fills);
 
   // ehh this sucks burnt currently as I write this
   allFills = p1Fills ? allFills.concat(p1Fills.data) : allFills;
-  allFills = p2Fills ? allFills.concat(p2Fills.data) : allFills;
-  allFills = p3Fills ? allFills.concat(p3Fills.data) : allFills;
-  allFills = p4Fills ? allFills.concat(p4Fills.data) : allFills;
-  allFills = p5Fills ? allFills.concat(p5Fills.data) : allFills;
+  // allFills = p2Fills ? allFills.concat(p2Fills.data) : allFills;
+  // allFills = p3Fills ? allFills.concat(p3Fills.data) : allFills;
+  // allFills = p4Fills ? allFills.concat(p4Fills.data) : allFills;
+  // allFills = p5Fills ? allFills.concat(p5Fills.data) : allFills;
 
   // this is all ugly, should just do an int loop
   const p1Gains = processBuySells(
@@ -150,37 +158,89 @@ const getGainsLoss = async (req, res) => {
     }
   );
 
-  const p2Gains = processBuySells(
-    2,
-    {
-      fills: p2Fills.data,
-      btcPrice
-    }
-  );
+  // add transferred from portfolio
+  // 2021-02-21T12:43:51.702Z
+  // 0.0137 BTC
+  // 57000
 
-  const p3Gains = processBuySells(
-    3,
-    {
-      fills: p3Fills.data,
-      btcPrice
-    }
-  );
+  // p1Gains.buys.push({
+  //   size: 0.0137,
+  //   price: 57000,
+  //   date: '2021-02-21T12:43:51.702Z'
+  // });
 
-  const p4Gains = processBuySells(
-    4,
-    {
-      fills: p4Fills.data,
-      btcPrice
-    }
-  );
+  // p1Gains.buys.sort(function(a, b) {
+  //   var x = a['date']; var y = b['date'];
+  //   return ((x < y) ? -1 : ((x > y) ? 1 : 0));
+  // });
 
-  const p5Gains = processBuySells(
-    5,
-    {
-      fills: p5Fills.data,
-      btcPrice
+  // console.log(p1Gains.buys);
+
+
+  // process gains
+  let sellGain = 0;
+  let sellLoss = 0;
+  let costBasis = [];
+  let highestBuy = 0;
+  let boughtCoin = 0;
+
+  p1Gains.buys.forEach(buy => {
+    const fillGain = parseFloat(btcPrice.split(',').join('')) / parseFloat(buy.price);
+    costBasis.push(parseFloat(buy.price));
+
+    boughtCoin += parseFloat(buy.size);
+
+    // if (parseFloat(buy.price) > highestBuy && parseFloat(buy.price) < 57000 ) {
+    if (parseFloat(buy.price) > highestBuy) {
+      highestBuy = parseFloat(buy.price);
     }
-  );
+
+    fillGain >= 1
+      ? sellGain += ((fillGain - 1) * parseFloat(buy.size * buy.price))
+      : sellLoss += ((1 - fillGain) * parseFloat(buy.size * buy.price));
+
+    console.log(buy.date, buy.size, buy.price, (buy.size * buy.price).toFixed(2), `${(fillGain * 100).toFixed(0)}%`);
+  });
+
+  console.log('>>>', boughtCoin);
+
+  let costBasisSum = 0;
+
+  costBasis.forEach(sum => costBasisSum += sum);
+
+  console.log('loss', sellLoss, 'gain', sellGain, 'avg cost basis', (costBasisSum / costBasis.length).toFixed(2), 'highest buy', highestBuy);
+
+  // const p2Gains = processBuySells(
+  //   2,
+  //   {
+  //     fills: p2Fills.data,
+  //     btcPrice
+  //   }
+  // );
+
+  // const p3Gains = processBuySells(
+  //   3,
+  //   {
+  //     fills: p3Fills.data,
+  //     btcPrice
+  //   }
+  // );
+
+  // const p4Gains = processBuySells(
+  //   4,
+  //   {
+  //     fills: p4Fills.data,
+  //     btcPrice
+  //   }
+  // );
+
+  // const p5Gains = processBuySells(
+  //   5,
+  //   {
+  //     fills: p5Fills.data,
+  //     btcPrice
+  //   }
+  // );
 
   const totalGains = processBuySells(
     1, // included
@@ -193,10 +253,6 @@ const getGainsLoss = async (req, res) => {
   res.status(200).send(`
     total gains: $${totalGains.gains.toFixed(2)} <br>
     portfolio 1: $${p1Gains.gains.toFixed(2)} <br>
-    portfolio 2: $${p2Gains.gains.toFixed(2)} <br>
-    portfolio 3: $${p3Gains.gains.toFixed(2)} <br>
-    portfolio 4: $${p4Gains.gains.toFixed(2)} <br>
-    portfolio 5: $${p5Gains.gains.toFixed(2)}
   `);
 }
 
